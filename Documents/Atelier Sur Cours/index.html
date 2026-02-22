@@ -367,6 +367,76 @@
     }
     .page-footer a:hover { color: var(--dark); }
 
+    /* ── Phone field ── */
+    .phone-wrapper {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+    }
+    .phone-country-trigger {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .65rem .7rem;
+      border: 1px solid var(--border);
+      border-right: none;
+      background: #f7f7f7;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      font-family: 'Open Sans', sans-serif;
+      font-size: .88rem;
+      color: var(--dark);
+      transition: border-color .2s;
+    }
+    .phone-country-trigger:hover { background: #efefef; }
+    .phone-caret { font-size: .6rem; color: var(--muted); margin-left: .1rem; }
+    .phone-wrapper:focus-within .phone-country-trigger { border-color: var(--dark); }
+    .phone-wrapper input[type="tel"] { border-left: none; flex: 1; min-width: 0; }
+
+    .phone-country-dropdown {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      z-index: 200;
+      background: #fff;
+      border: 1px solid var(--border);
+      width: 270px;
+      max-height: 260px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,.10);
+    }
+    .phone-country-dropdown.open { display: flex; }
+    .phone-search {
+      border: none !important;
+      border-bottom: 1px solid var(--border) !important;
+      padding: .5rem .8rem !important;
+      font-size: .85rem !important;
+      font-family: 'Open Sans', sans-serif !important;
+      outline: none !important;
+      flex-shrink: 0;
+      color: var(--dark) !important;
+    }
+    .phone-country-list {
+      list-style: none;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .phone-country-list li {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .45rem .8rem;
+      font-size: .83rem;
+      cursor: pointer;
+      color: var(--dark);
+    }
+    .phone-country-list li:hover { background: var(--bg); }
+    .phone-country-list li.selected { font-weight: 600; background: #f0f0f0; }
+    .phone-country-list .c-code { color: var(--muted); font-size: .78rem; margin-left: auto; }
+
     /* ── Responsive ── */
     @media (max-width: 600px) {
       .card { padding: 1.5rem 1.25rem; }
@@ -436,7 +506,18 @@
 
         <div class="field">
           <label for="telephone">Téléphone <span class="req">*</span></label>
-          <input type="tel" id="telephone" name="telephone" autocomplete="tel" />
+          <div class="phone-wrapper">
+            <div class="phone-country-trigger" id="phoneCountryTrigger" data-code="+33">
+              <span id="phoneFlag">🇫🇷</span>
+              <span id="phoneCode">+33</span>
+              <span class="phone-caret">▾</span>
+            </div>
+            <div class="phone-country-dropdown" id="phoneCountryDropdown">
+              <input type="text" id="phoneSearch" class="phone-search" placeholder="Rechercher un pays…" autocomplete="off" />
+              <ul class="phone-country-list" id="phoneCountryList"></ul>
+            </div>
+            <input type="tel" id="telephone" name="telephone" autocomplete="tel" placeholder="6 11 22 33 44" />
+          </div>
           <span class="field-error" id="err-telephone">Champ requis.</span>
         </div>
 
@@ -602,6 +683,113 @@
 
   const $ = id => document.getElementById(id);
 
+  // ── Country dial-code data ────────────────────
+  const COUNTRIES = [
+    { flag: '🇫🇷', name: 'France',                code: '+33'  },
+    { flag: '🇩🇿', name: 'Algérie',               code: '+213' },
+    { flag: '🇩🇪', name: 'Allemagne',             code: '+49'  },
+    { flag: '🇦🇴', name: 'Angola',                code: '+244' },
+    { flag: '🇸🇦', name: 'Arabie saoudite',       code: '+966' },
+    { flag: '🇦🇷', name: 'Argentine',             code: '+54'  },
+    { flag: '🇦🇺', name: 'Australie',             code: '+61'  },
+    { flag: '🇦🇹', name: 'Autriche',              code: '+43'  },
+    { flag: '🇧🇪', name: 'Belgique',              code: '+32'  },
+    { flag: '🇧🇷', name: 'Brésil',                code: '+55'  },
+    { flag: '🇧🇫', name: 'Burkina Faso',          code: '+226' },
+    { flag: '🇨🇲', name: 'Cameroun',              code: '+237' },
+    { flag: '🇨🇦', name: 'Canada',                code: '+1'   },
+    { flag: '🇨🇳', name: 'Chine',                 code: '+86'  },
+    { flag: '🇨🇮', name: "Côte d'Ivoire",         code: '+225' },
+    { flag: '🇩🇰', name: 'Danemark',              code: '+45'  },
+    { flag: '🇪🇬', name: 'Égypte',                code: '+20'  },
+    { flag: '🇦🇪', name: 'Émirats arabes unis',   code: '+971' },
+    { flag: '🇪🇸', name: 'Espagne',               code: '+34'  },
+    { flag: '🇺🇸', name: 'États-Unis',            code: '+1'   },
+    { flag: '🇫🇮', name: 'Finlande',              code: '+358' },
+    { flag: '🇬🇦', name: 'Gabon',                 code: '+241' },
+    { flag: '🇬🇭', name: 'Ghana',                 code: '+233' },
+    { flag: '🇬🇷', name: 'Grèce',                 code: '+30'  },
+    { flag: '🇬🇳', name: 'Guinée',                code: '+224' },
+    { flag: '🇮🇳', name: 'Inde',                  code: '+91'  },
+    { flag: '🇮🇩', name: 'Indonésie',             code: '+62'  },
+    { flag: '🇮🇱', name: 'Israël',                code: '+972' },
+    { flag: '🇮🇹', name: 'Italie',                code: '+39'  },
+    { flag: '🇯🇵', name: 'Japon',                 code: '+81'  },
+    { flag: '🇯🇴', name: 'Jordanie',              code: '+962' },
+    { flag: '🇰🇪', name: 'Kenya',                 code: '+254' },
+    { flag: '🇱🇧', name: 'Liban',                 code: '+961' },
+    { flag: '🇱🇾', name: 'Libye',                 code: '+218' },
+    { flag: '🇱🇺', name: 'Luxembourg',            code: '+352' },
+    { flag: '🇲🇬', name: 'Madagascar',            code: '+261' },
+    { flag: '🇲🇱', name: 'Mali',                  code: '+223' },
+    { flag: '🇲🇦', name: 'Maroc',                 code: '+212' },
+    { flag: '🇲🇽', name: 'Mexique',               code: '+52'  },
+    { flag: '🇳🇱', name: 'Pays-Bas',              code: '+31'  },
+    { flag: '🇳🇬', name: 'Nigéria',               code: '+234' },
+    { flag: '🇳🇴', name: 'Norvège',               code: '+47'  },
+    { flag: '🇵🇰', name: 'Pakistan',              code: '+92'  },
+    { flag: '🇵🇹', name: 'Portugal',              code: '+351' },
+    { flag: '🇨🇩', name: 'RD Congo',              code: '+243' },
+    { flag: '🇨🇬', name: 'République du Congo',   code: '+242' },
+    { flag: '🇷🇴', name: 'Roumanie',              code: '+40'  },
+    { flag: '🇬🇧', name: 'Royaume-Uni',           code: '+44'  },
+    { flag: '🇷🇺', name: 'Russie',                code: '+7'   },
+    { flag: '🇸🇳', name: 'Sénégal',               code: '+221' },
+    { flag: '🇸🇬', name: 'Singapour',             code: '+65'  },
+    { flag: '🇸🇪', name: 'Suède',                 code: '+46'  },
+    { flag: '🇨🇭', name: 'Suisse',                code: '+41'  },
+    { flag: '🇹🇳', name: 'Tunisie',               code: '+216' },
+    { flag: '🇹🇷', name: 'Turquie',               code: '+90'  },
+  ];
+
+  let selectedCountry = COUNTRIES[0];
+
+  function buildCountryList(filter = '') {
+    const list = $('phoneCountryList');
+    list.innerHTML = '';
+    const q = filter.toLowerCase();
+    COUNTRIES
+      .filter(c => !q || c.name.toLowerCase().includes(q) || c.code.includes(q))
+      .forEach(c => {
+        const li = document.createElement('li');
+        if (c === selectedCountry) li.classList.add('selected');
+        li.innerHTML = `<span>${c.flag}</span><span>${c.name}</span><span class="c-code">${c.code}</span>`;
+        li.addEventListener('mousedown', (e) => { e.preventDefault(); selectCountry(c); });
+        list.appendChild(li);
+      });
+  }
+
+  function selectCountry(c) {
+    selectedCountry = c;
+    $('phoneFlag').textContent = c.flag;
+    $('phoneCode').textContent = c.code;
+    $('phoneCountryTrigger').dataset.code = c.code;
+    closeDropdown();
+  }
+
+  function openDropdown() {
+    $('phoneCountryDropdown').classList.add('open');
+    $('phoneSearch').value = '';
+    buildCountryList();
+    setTimeout(() => $('phoneSearch').focus(), 50);
+  }
+
+  function closeDropdown() {
+    $('phoneCountryDropdown').classList.remove('open');
+  }
+
+  $('phoneCountryTrigger').addEventListener('click', (e) => {
+    e.stopPropagation();
+    $('phoneCountryDropdown').classList.contains('open') ? closeDropdown() : openDropdown();
+  });
+
+  $('phoneSearch').addEventListener('input', (e) => buildCountryList(e.target.value));
+  $('phoneSearch').addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.phone-wrapper')) closeDropdown();
+  });
+
   // ── Screens ──────────────────────────────────
   function showScreen(name) {
     ['screen-form', 'screen-summary', 'screen-success'].forEach(id => {
@@ -629,7 +817,15 @@
 
   function collectFormData() {
     const data = {};
-    FIELDS.forEach(f => { data[f] = $(f).value.trim(); });
+    FIELDS.forEach(f => {
+      if (f === 'telephone') {
+        const code = $('phoneCountryTrigger').dataset.code || '+33';
+        const num  = $('telephone').value.trim().replace(/^0+/, '');
+        data.telephone = num ? `${code} ${num}` : '';
+      } else {
+        data[f] = $(f).value.trim();
+      }
+    });
     return data;
   }
 
