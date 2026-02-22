@@ -4,103 +4,125 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Atelier Sur Cours — Fiche Client</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
     /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --brand:       #2c5f2e;
-      --brand-light: #e8f5e9;
-      --accent:      #4caf50;
-      --danger:      #d32f2f;
-      --muted:       #757575;
-      --border:      #d0d0d0;
-      --radius:      8px;
-      --shadow:      0 2px 12px rgba(0,0,0,.10);
-      --gap:         1.25rem;
+      --dark:    #464C5F;
+      --black:   #000000;
+      --gold:    #FFD936;
+      --gold-dk: #DAB200;
+      --hover:   #6A8690;
+      --bg:      #F6F8F5;
+      --danger:  #c0392b;
+      --muted:   #888;
+      --border:  #d8d8d8;
+      --gap:     1.25rem;
     }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: #f5f7f5;
-      color: #1a1a1a;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 400;
+      background: var(--bg);
+      color: var(--dark);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem 1rem 4rem;
+      padding: 2.5rem 1rem 5rem;
+    }
+
+    /* ── Page header (logo) ── */
+    .page-header {
+      width: 100%;
+      max-width: 780px;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .page-header img {
+      height: 64px;
+      width: auto;
+    }
+    .page-header .subtitle {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      font-size: .85rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: .5rem;
     }
 
     /* ── Card wrapper ── */
     .card {
       background: #fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      border: 1px solid #ddd;
       width: 100%;
       max-width: 780px;
-      padding: 2.5rem 2rem;
+      padding: 2.5rem 2.5rem;
     }
-
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    header h1 {
-      font-size: 1.6rem;
-      color: var(--brand);
-      margin-bottom: .3rem;
-    }
-    header p { color: var(--muted); font-size: .95rem; }
 
     /* ── Progress indicator ── */
     .progress {
       display: flex;
       justify-content: center;
-      gap: 2rem;
-      margin-bottom: 2rem;
-      font-size: .85rem;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      font-size: .75rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
     }
     .progress-step {
       display: flex;
       align-items: center;
-      gap: .4rem;
+      gap: .5rem;
       color: var(--muted);
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
     }
-    .progress-step.active { color: var(--brand); font-weight: 600; }
+    .progress-step.active {
+      color: var(--dark);
+      font-weight: 600;
+    }
+    .progress-step.done { color: var(--muted); }
     .progress-step .dot {
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
+      width: 22px; height: 22px;
+      border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      font-size: .75rem; font-weight: 700;
+      font-size: .7rem; font-weight: 600;
     }
     .progress-step.active .dot {
-      background: var(--brand);
-      border-color: var(--brand);
+      background: var(--dark);
+      border-color: var(--dark);
       color: #fff;
     }
     .progress-step.done .dot {
-      background: var(--accent);
-      border-color: var(--accent);
+      background: var(--muted);
+      border-color: var(--muted);
       color: #fff;
     }
     .progress-divider {
-      width: 40px; height: 2px;
+      width: 48px; height: 1px;
       background: var(--border);
-      align-self: center;
     }
 
     /* ── Section labels ── */
     .section-label {
-      font-size: .75rem;
-      font-weight: 700;
-      letter-spacing: .08em;
+      font-family: 'Open Sans', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      color: var(--brand);
-      border-bottom: 1px solid var(--brand-light);
-      padding-bottom: .4rem;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: .5rem;
       margin-bottom: 1rem;
-      margin-top: 1.5rem;
+      margin-top: 1.75rem;
       grid-column: 1 / -1;
     }
     .section-label:first-child { margin-top: 0; }
@@ -115,31 +137,33 @@
     .field {
       display: flex;
       flex-direction: column;
-      gap: .35rem;
+      gap: .4rem;
     }
     .field.full { grid-column: 1 / -1; }
 
     label {
-      font-size: .875rem;
+      font-size: .8rem;
       font-weight: 600;
-      color: #333;
+      letter-spacing: .04em;
+      color: var(--dark);
+      text-transform: uppercase;
     }
     label .req { color: var(--danger); margin-left: 2px; }
 
-    input, textarea, select {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      padding: .6rem .8rem;
+    input, textarea {
+      border: 1px solid var(--border);
+      border-radius: 0;
+      padding: .65rem .85rem;
       font-size: .95rem;
-      font-family: inherit;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
       transition: border-color .2s;
       background: #fff;
-      color: #1a1a1a;
+      color: var(--dark);
     }
     input:focus, textarea:focus {
       outline: none;
-      border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(44,95,46,.12);
+      border-color: var(--dark);
     }
     input.invalid, textarea.invalid {
       border-color: var(--danger);
@@ -147,7 +171,7 @@
     textarea { resize: vertical; min-height: 90px; }
 
     .field-error {
-      font-size: .8rem;
+      font-size: .78rem;
       color: var(--danger);
       display: none;
     }
@@ -158,39 +182,48 @@
       display: inline-flex;
       align-items: center;
       gap: .5rem;
-      padding: .75rem 1.5rem;
-      border-radius: var(--radius);
-      border: none;
-      font-size: .95rem;
+      padding: .75rem 2rem;
+      border-radius: 0;
+      border: 1px solid var(--black);
+      background: #fff;
+      color: var(--black);
+      font-family: 'Open Sans', sans-serif;
+      font-size: .8rem;
       font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: background .2s, transform .1s;
+      transition: background .2s, color .2s;
     }
-    .btn:active { transform: translateY(1px); }
+    .btn:hover {
+      background: var(--hover);
+      color: #fff;
+      border-color: var(--hover);
+    }
+    .btn:active { opacity: .85; }
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
 
     .btn-primary {
-      background: var(--brand);
+      background: var(--dark);
       color: #fff;
+      border-color: var(--dark);
     }
-    .btn-primary:hover { background: #1e4220; }
-
-    .btn-secondary {
-      background: #fff;
-      color: var(--brand);
-      border: 1.5px solid var(--brand);
+    .btn-primary:hover {
+      background: var(--hover);
+      border-color: var(--hover);
     }
-    .btn-secondary:hover { background: var(--brand-light); }
 
-    .btn-success {
-      background: var(--accent);
+    .btn-confirm {
+      background: var(--dark);
       color: #fff;
+      border-color: var(--dark);
     }
-    .btn-success:hover { background: #388e3c; }
-
-    .btn:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-      transform: none;
+    .btn-confirm:hover {
+      background: var(--hover);
+      border-color: var(--hover);
     }
 
     .form-actions {
@@ -206,36 +239,54 @@
     #screen-success.active { display: block; }
 
     /* ── Summary screen ── */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .75rem var(--gap);
+    .summary-intro {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--dark);
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
     }
 
-    .summary-item { display: flex; flex-direction: column; gap: .2rem; }
-    .summary-item.full { grid-column: 1 / -1; }
-
-    .summary-label {
-      font-size: .75rem;
-      font-weight: 700;
+    .summary-block {
+      border: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+    .summary-block-title {
+      background: var(--dark);
+      color: #fff;
+      padding: .45rem 1rem;
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      letter-spacing: .06em;
-      color: var(--muted);
     }
-    .summary-value {
-      font-size: .95rem;
-      color: #1a1a1a;
-      background: var(--brand-light);
-      padding: .5rem .75rem;
-      border-radius: var(--radius);
-      border: 1px solid #c8e6c9;
-      word-break: break-word;
+    .summary-row {
+      display: flex;
+      align-items: baseline;
+      padding: .6rem 1rem;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-key {
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      width: 38%;
+      flex-shrink: 0;
+    }
+    .summary-val {
+      font-size: .92rem;
+      font-weight: 400;
+      color: var(--dark);
       white-space: pre-wrap;
-      min-height: 2.2rem;
+      word-break: break-word;
     }
-    .summary-value:empty::after {
+    .summary-val:empty::after {
       content: '—';
-      color: var(--muted);
+      color: #ccc;
     }
 
     .summary-actions {
@@ -249,25 +300,24 @@
 
     /* ── Spinner ── */
     .spinner {
-      width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,.4);
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.4);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin .7s linear infinite;
       display: none;
     }
-    .spinner.show { display: block; }
+    .spinner.show { display: inline-block; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Inline error banner ── */
+    /* ── Error banner ── */
     .error-banner {
       display: none;
-      background: #fdecea;
+      background: #fdf2f2;
       border: 1px solid #f5c6cb;
       color: var(--danger);
-      border-radius: var(--radius);
       padding: .75rem 1rem;
-      font-size: .9rem;
+      font-size: .875rem;
       margin-top: 1rem;
     }
     .error-banner.show { display: block; }
@@ -275,40 +325,70 @@
     /* ── Success screen ── */
     .success-box {
       text-align: center;
-      padding: 3rem 1rem;
+      padding: 3.5rem 1rem;
     }
-    .success-icon {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
+    .success-mark {
+      width: 52px; height: 52px;
+      border: 2px solid var(--dark);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.4rem;
+      color: var(--dark);
     }
     .success-box h2 {
-      font-size: 1.5rem;
-      color: var(--brand);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--dark);
       margin-bottom: .75rem;
     }
-    .success-box p { color: var(--muted); }
+    .success-box p {
+      font-size: .9rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── Footer ── */
+    .page-footer {
+      width: 100%;
+      max-width: 780px;
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: .72rem;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+    .page-footer a {
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .page-footer a:hover { color: var(--dark); }
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
-      .card { padding: 1.5rem 1rem; }
+      .card { padding: 1.5rem 1.25rem; }
       .form-grid { grid-template-columns: 1fr; }
       .field.full { grid-column: 1; }
-      .summary-grid { grid-template-columns: 1fr; }
-      .summary-item.full { grid-column: 1; }
-      .progress { gap: 1rem; font-size: .78rem; }
-      .progress-divider { width: 20px; }
+      .progress { gap: .6rem; font-size: .7rem; }
+      .progress-divider { width: 24px; }
+      .summary-key { width: 45%; }
     }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <header>
-    <h1>Atelier Sur Cours</h1>
-    <p>Enregistrement client</p>
-  </header>
+<!-- Logo -->
+<div class="page-header">
+  <img src="logo.png" alt="Atelier Sur Cours" />
+  <p class="subtitle">Enregistrement client</p>
+</div>
 
-  <!-- Progress bar -->
+<div class="card">
+
+  <!-- Progress indicator -->
   <div class="progress" id="progress-bar">
     <div class="progress-step active" id="step1-indicator">
       <div class="dot">1</div>
@@ -321,19 +401,17 @@
     </div>
   </div>
 
-  <!-- ══════════════ SCREEN 1: FORM ══════════════ -->
+  <!-- ══════════════ SCREEN 1 : FORM ══════════════ -->
   <div id="screen-form" class="active">
     <form id="client-form" novalidate>
-
       <div class="form-grid">
 
-        <!-- Company -->
+        <!-- Entreprise -->
         <div class="section-label">Entreprise</div>
 
         <div class="field">
-          <label for="nomEntreprise">Nom entreprise <span class="req">*</span></label>
+          <label for="nomEntreprise">Nom entreprise</label>
           <input type="text" id="nomEntreprise" name="nomEntreprise" autocomplete="organization" />
-          <span class="field-error" id="err-nomEntreprise">Champ requis.</span>
         </div>
 
         <div class="field">
@@ -341,7 +419,7 @@
           <input type="text" id="siren" name="siren" maxlength="14" />
         </div>
 
-        <!-- Personal -->
+        <!-- Contact -->
         <div class="section-label">Contact</div>
 
         <div class="field">
@@ -368,27 +446,31 @@
           <span class="field-error" id="err-email">Adresse e-mail invalide.</span>
         </div>
 
-        <!-- Address -->
+        <!-- Adresse -->
         <div class="section-label">Adresse</div>
 
         <div class="field full">
-          <label for="adresse">Adresse</label>
+          <label for="adresse">Adresse <span class="req">*</span></label>
           <input type="text" id="adresse" name="adresse" autocomplete="street-address" />
+          <span class="field-error" id="err-adresse">Champ requis.</span>
         </div>
 
         <div class="field">
-          <label for="codePostal">Code Postal</label>
+          <label for="codePostal">Code Postal <span class="req">*</span></label>
           <input type="text" id="codePostal" name="codePostal" autocomplete="postal-code" maxlength="10" />
+          <span class="field-error" id="err-codePostal">Champ requis.</span>
         </div>
 
         <div class="field">
-          <label for="ville">Ville</label>
+          <label for="ville">Ville <span class="req">*</span></label>
           <input type="text" id="ville" name="ville" autocomplete="address-level2" />
+          <span class="field-error" id="err-ville">Champ requis.</span>
         </div>
 
         <div class="field">
-          <label for="pays">Pays</label>
+          <label for="pays">Pays <span class="req">*</span></label>
           <input type="text" id="pays" name="pays" autocomplete="country-name" value="France" />
+          <span class="field-error" id="err-pays">Champ requis.</span>
         </div>
 
         <!-- Notes -->
@@ -406,68 +488,77 @@
           Suivant →
         </button>
       </div>
-
     </form>
   </div><!-- /screen-form -->
 
-  <!-- ══════════════ SCREEN 2: SUMMARY ══════════════ -->
+  <!-- ══════════════ SCREEN 2 : SUMMARY ══════════════ -->
   <div id="screen-summary">
 
-    <div class="summary-grid">
+    <p class="summary-intro">Veuillez vérifier vos informations avant de confirmer l'envoi.</p>
 
-      <div class="section-label">Entreprise</div>
-      <div class="summary-item">
-        <span class="summary-label">Nom entreprise</span>
-        <span class="summary-value" id="s-nomEntreprise"></span>
+    <!-- Entreprise -->
+    <div class="summary-block">
+      <div class="summary-block-title">Entreprise</div>
+      <div class="summary-row">
+        <span class="summary-key">Nom entreprise</span>
+        <span class="summary-val" id="s-nomEntreprise"></span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">SIREN</span>
-        <span class="summary-value" id="s-siren"></span>
+      <div class="summary-row">
+        <span class="summary-key">SIREN</span>
+        <span class="summary-val" id="s-siren"></span>
       </div>
+    </div>
 
-      <div class="section-label">Contact</div>
-      <div class="summary-item">
-        <span class="summary-label">Nom</span>
-        <span class="summary-value" id="s-nom"></span>
+    <!-- Contact -->
+    <div class="summary-block">
+      <div class="summary-block-title">Contact</div>
+      <div class="summary-row">
+        <span class="summary-key">Nom</span>
+        <span class="summary-val" id="s-nom"></span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Prénom</span>
-        <span class="summary-value" id="s-prenom"></span>
+      <div class="summary-row">
+        <span class="summary-key">Prénom</span>
+        <span class="summary-val" id="s-prenom"></span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Téléphone</span>
-        <span class="summary-value" id="s-telephone"></span>
+      <div class="summary-row">
+        <span class="summary-key">Téléphone</span>
+        <span class="summary-val" id="s-telephone"></span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Email</span>
-        <span class="summary-value" id="s-email"></span>
+      <div class="summary-row">
+        <span class="summary-key">Email</span>
+        <span class="summary-val" id="s-email"></span>
       </div>
+    </div>
 
-      <div class="section-label">Adresse</div>
-      <div class="summary-item full">
-        <span class="summary-label">Adresse</span>
-        <span class="summary-value" id="s-adresse"></span>
+    <!-- Adresse -->
+    <div class="summary-block">
+      <div class="summary-block-title">Adresse</div>
+      <div class="summary-row">
+        <span class="summary-key">Adresse</span>
+        <span class="summary-val" id="s-adresse"></span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Code Postal</span>
-        <span class="summary-value" id="s-codePostal"></span>
+      <div class="summary-row">
+        <span class="summary-key">Code Postal</span>
+        <span class="summary-val" id="s-codePostal"></span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Ville</span>
-        <span class="summary-value" id="s-ville"></span>
+      <div class="summary-row">
+        <span class="summary-key">Ville</span>
+        <span class="summary-val" id="s-ville"></span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Pays</span>
-        <span class="summary-value" id="s-pays"></span>
+      <div class="summary-row">
+        <span class="summary-key">Pays</span>
+        <span class="summary-val" id="s-pays"></span>
       </div>
+    </div>
 
-      <div class="section-label">Notes</div>
-      <div class="summary-item full">
-        <span class="summary-label">Notes</span>
-        <span class="summary-value" id="s-notes"></span>
+    <!-- Notes -->
+    <div class="summary-block">
+      <div class="summary-block-title">Notes</div>
+      <div class="summary-row">
+        <span class="summary-key">Notes</span>
+        <span class="summary-val" id="s-notes"></span>
       </div>
-
-    </div><!-- /summary-grid -->
+    </div>
 
     <div class="error-banner" id="error-banner">
       Une erreur s'est produite lors de l'envoi. Veuillez réessayer.
@@ -475,21 +566,21 @@
     </div>
 
     <div class="summary-actions">
-      <button type="button" class="btn btn-secondary" id="btn-back">
+      <button type="button" class="btn" id="btn-back">
         ← Modifier
       </button>
-      <button type="button" class="btn btn-success" id="btn-confirm">
+      <button type="button" class="btn btn-confirm" id="btn-confirm">
         <span class="spinner" id="spinner"></span>
-        <span id="btn-confirm-label">Confirmer et envoyer ✓</span>
+        <span id="btn-confirm-label">Confirmer et envoyer</span>
       </button>
     </div>
 
   </div><!-- /screen-summary -->
 
-  <!-- ══════════════ SCREEN 3: SUCCESS ══════════════ -->
+  <!-- ══════════════ SCREEN 3 : SUCCESS ══════════════ -->
   <div id="screen-success">
     <div class="success-box">
-      <div class="success-icon">✅</div>
+      <div class="success-mark">✓</div>
       <h2>Merci !</h2>
       <p>Vos informations ont bien été envoyées.<br>Nous reviendrons vers vous très prochainement.</p>
     </div>
@@ -497,22 +588,27 @@
 
 </div><!-- /card -->
 
+<!-- Footer RGPD -->
+<footer class="page-footer">
+  En soumettant ce formulaire, vous acceptez notre&nbsp;
+  <a href="rgpd.html" target="_blank">Politique de confidentialité (RGPD)</a>.
+</footer>
+
 <script>
   // ─────────────────────────────────────────────
-  //  CONFIGURATION — paste your Web App URL here
+  //  CONFIGURATION
   // ─────────────────────────────────────────────
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyz7ak5fX4aHv_V58VWWx5MM14yxwPWWWYhwxLCIJNY9Wba28mEfjwzIZ42SG3nD4zGXw/exec';
 
-  // ── Helpers ──────────────────────────────────
   const $ = id => document.getElementById(id);
 
+  // ── Screens ──────────────────────────────────
   function showScreen(name) {
     ['screen-form', 'screen-summary', 'screen-success'].forEach(id => {
       $(id).classList.remove('active');
     });
     $('screen-' + name).classList.add('active');
 
-    // Update progress indicator
     if (name === 'form') {
       $('step1-indicator').className = 'progress-step active';
       $('step2-indicator').className = 'progress-step';
@@ -538,14 +634,13 @@
   }
 
   // ── Validation ───────────────────────────────
-  const REQUIRED = ['nomEntreprise', 'nom', 'prenom', 'telephone', 'email'];
+  const REQUIRED = ['nom', 'prenom', 'telephone', 'email', 'adresse', 'codePostal', 'ville', 'pays'];
 
   function validateForm() {
     let valid = true;
-    // Clear previous errors
+
     FIELDS.forEach(f => {
-      const el = $(f);
-      el.classList.remove('invalid');
+      $(f).classList.remove('invalid');
       const err = $('err-' + f);
       if (err) err.classList.remove('show');
     });
@@ -560,7 +655,6 @@
       }
     });
 
-    // Email format
     const emailEl = $('email');
     if (emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
       emailEl.classList.add('invalid');
@@ -573,20 +667,6 @@
   }
 
   // ── Summary ──────────────────────────────────
-  const LABELS = {
-    nomEntreprise: 'Nom entreprise',
-    siren:         'SIREN',
-    nom:           'Nom',
-    prenom:        'Prénom',
-    telephone:     'Téléphone',
-    email:         'Email',
-    adresse:       'Adresse',
-    codePostal:    'Code Postal',
-    ville:         'Ville',
-    pays:          'Pays',
-    notes:         'Notes',
-  };
-
   function renderSummary(data) {
     FIELDS.forEach(f => {
       const el = $('s-' + f);
@@ -596,9 +676,9 @@
 
   // ── Submission ───────────────────────────────
   async function submitToSheet(data) {
-    const spinner  = $('spinner');
-    const btnLabel = $('btn-confirm-label');
-    const btnConfirm = $('btn-confirm');
+    const spinner     = $('spinner');
+    const btnLabel    = $('btn-confirm-label');
+    const btnConfirm  = $('btn-confirm');
     const errorBanner = $('error-banner');
     const errorDetail = $('error-detail');
 
@@ -610,18 +690,14 @@
     try {
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' }, // avoid CORS preflight
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        throw new Error('HTTP ' + response.status);
-      }
+      if (!response.ok) throw new Error('HTTP ' + response.status);
 
       const json = await response.json();
-      if (json.status !== 'success') {
-        throw new Error(json.message || 'Réponse inattendue du serveur.');
-      }
+      if (json.status !== 'success') throw new Error(json.message || 'Réponse inattendue.');
 
       showScreen('success');
 
@@ -630,16 +706,15 @@
       errorBanner.classList.add('show');
     } finally {
       spinner.classList.remove('show');
-      btnLabel.textContent = 'Confirmer et envoyer ✓';
+      btnLabel.textContent = 'Confirmer et envoyer';
       btnConfirm.disabled = false;
     }
   }
 
-  // ── Event listeners ──────────────────────────
+  // ── Events ───────────────────────────────────
   $('btn-next').addEventListener('click', () => {
     if (!validateForm()) return;
-    const data = collectFormData();
-    renderSummary(data);
+    renderSummary(collectFormData());
     showScreen('summary');
   });
 
@@ -649,11 +724,9 @@
   });
 
   $('btn-confirm').addEventListener('click', () => {
-    const data = collectFormData();
-    submitToSheet(data);
+    submitToSheet(collectFormData());
   });
 
-  // Clear field error on input
   FIELDS.forEach(f => {
     const el = $(f);
     if (!el) return;
@@ -664,7 +737,6 @@
     });
   });
 
-  // Init
   showScreen('form');
 </script>
 </body>
