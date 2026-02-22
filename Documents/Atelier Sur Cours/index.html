@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atelier Sur Cours — Fiche Client</title>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:       #2c5f2e;
+      --brand-light: #e8f5e9;
+      --accent:      #4caf50;
+      --danger:      #d32f2f;
+      --muted:       #757575;
+      --border:      #d0d0d0;
+      --radius:      8px;
+      --shadow:      0 2px 12px rgba(0,0,0,.10);
+      --gap:         1.25rem;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f5f7f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Card wrapper ── */
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 780px;
+      padding: 2.5rem 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 1.6rem;
+      color: var(--brand);
+      margin-bottom: .3rem;
+    }
+    header p { color: var(--muted); font-size: .95rem; }
+
+    /* ── Progress indicator ── */
+    .progress {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      font-size: .85rem;
+    }
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      color: var(--muted);
+    }
+    .progress-step.active { color: var(--brand); font-weight: 600; }
+    .progress-step .dot {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700;
+    }
+    .progress-step.active .dot {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+    .progress-step.done .dot {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .progress-divider {
+      width: 40px; height: 2px;
+      background: var(--border);
+      align-self: center;
+    }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--brand);
+      border-bottom: 1px solid var(--brand-light);
+      padding-bottom: .4rem;
+      margin-bottom: 1rem;
+      margin-top: 1.5rem;
+      grid-column: 1 / -1;
+    }
+    .section-label:first-child { margin-top: 0; }
+
+    /* ── Form grid ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+    }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: .875rem;
+      font-weight: 600;
+      color: #333;
+    }
+    label .req { color: var(--danger); margin-left: 2px; }
+
+    input, textarea, select {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: .6rem .8rem;
+      font-size: .95rem;
+      font-family: inherit;
+      transition: border-color .2s;
+      background: #fff;
+      color: #1a1a1a;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(44,95,46,.12);
+    }
+    input.invalid, textarea.invalid {
+      border-color: var(--danger);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+
+    .field-error {
+      font-size: .8rem;
+      color: var(--danger);
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1.5rem;
+      border-radius: var(--radius);
+      border: none;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--brand);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #1e4220; }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--brand);
+      border: 1.5px solid var(--brand);
+    }
+    .btn-secondary:hover { background: var(--brand-light); }
+
+    .btn-success {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-success:hover { background: #388e3c; }
+
+    .btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 2rem;
+    }
+
+    /* ── Screen toggling ── */
+    #screen-form, #screen-summary, #screen-success { display: none; }
+    #screen-form.active,
+    #screen-summary.active,
+    #screen-success.active { display: block; }
+
+    /* ── Summary screen ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem var(--gap);
+    }
+
+    .summary-item { display: flex; flex-direction: column; gap: .2rem; }
+    .summary-item.full { grid-column: 1 / -1; }
+
+    .summary-label {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+    .summary-value {
+      font-size: .95rem;
+      color: #1a1a1a;
+      background: var(--brand-light);
+      padding: .5rem .75rem;
+      border-radius: var(--radius);
+      border: 1px solid #c8e6c9;
+      word-break: break-word;
+      white-space: pre-wrap;
+      min-height: 2.2rem;
+    }
+    .summary-value:empty::after {
+      content: '—';
+      color: var(--muted);
+    }
+
+    .summary-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    .spinner.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Inline error banner ── */
+    .error-banner {
+      display: none;
+      background: #fdecea;
+      border: 1px solid #f5c6cb;
+      color: var(--danger);
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      font-size: .9rem;
+      margin-top: 1rem;
+    }
+    .error-banner.show { display: block; }
+
+    /* ── Success screen ── */
+    .success-box {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    .success-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+    .success-box h2 {
+      font-size: 1.5rem;
+      color: var(--brand);
+      margin-bottom: .75rem;
+    }
+    .success-box p { color: var(--muted); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .card { padding: 1.5rem 1rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: 1; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .summary-item.full { grid-column: 1; }
+      .progress { gap: 1rem; font-size: .78rem; }
+      .progress-divider { width: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <header>
+    <h1>Atelier Sur Cours</h1>
+    <p>Enregistrement client</p>
+  </header>
+
+  <!-- Progress bar -->
+  <div class="progress" id="progress-bar">
+    <div class="progress-step active" id="step1-indicator">
+      <div class="dot">1</div>
+      <span>Informations</span>
+    </div>
+    <div class="progress-divider"></div>
+    <div class="progress-step" id="step2-indicator">
+      <div class="dot">2</div>
+      <span>Confirmation</span>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCREEN 1: FORM ══════════════ -->
+  <div id="screen-form" class="active">
+    <form id="client-form" novalidate>
+
+      <div class="form-grid">
+
+        <!-- Company -->
+        <div class="section-label">Entreprise</div>
+
+        <div class="field">
+          <label for="nomEntreprise">Nom entreprise <span class="req">*</span></label>
+          <input type="text" id="nomEntreprise" name="nomEntreprise" autocomplete="organization" />
+          <span class="field-error" id="err-nomEntreprise">Champ requis.</span>
+        </div>
+
+        <div class="field">
+          <label for="siren">SIREN</label>
+          <input type="text" id="siren" name="siren" maxlength="14" />
+        </div>
+
+        <!-- Personal -->
+        <div class="section-label">Contact</div>
+
+        <div class="field">
+          <label for="nom">Nom <span class="req">*</span></label>
+          <input type="text" id="nom" name="nom" autocomplete="family-name" />
+          <span class="field-error" id="err-nom">Champ requis.</span>
+        </div>
+
+        <div class="field">
+          <label for="prenom">Prénom <span class="req">*</span></label>
+          <input type="text" id="prenom" name="prenom" autocomplete="given-name" />
+          <span class="field-error" id="err-prenom">Champ requis.</span>
+        </div>
+
+        <div class="field">
+          <label for="telephone">Téléphone <span class="req">*</span></label>
+          <input type="tel" id="telephone" name="telephone" autocomplete="tel" />
+          <span class="field-error" id="err-telephone">Champ requis.</span>
+        </div>
+
+        <div class="field">
+          <label for="email">Email <span class="req">*</span></label>
+          <input type="email" id="email" name="email" autocomplete="email" />
+          <span class="field-error" id="err-email">Adresse e-mail invalide.</span>
+        </div>
+
+        <!-- Address -->
+        <div class="section-label">Adresse</div>
+
+        <div class="field full">
+          <label for="adresse">Adresse</label>
+          <input type="text" id="adresse" name="adresse" autocomplete="street-address" />
+        </div>
+
+        <div class="field">
+          <label for="codePostal">Code Postal</label>
+          <input type="text" id="codePostal" name="codePostal" autocomplete="postal-code" maxlength="10" />
+        </div>
+
+        <div class="field">
+          <label for="ville">Ville</label>
+          <input type="text" id="ville" name="ville" autocomplete="address-level2" />
+        </div>
+
+        <div class="field">
+          <label for="pays">Pays</label>
+          <input type="text" id="pays" name="pays" autocomplete="country-name" value="France" />
+        </div>
+
+        <!-- Notes -->
+        <div class="section-label">Notes</div>
+
+        <div class="field full">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" placeholder="Informations complémentaires…"></textarea>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" id="btn-next">
+          Suivant →
+        </button>
+      </div>
+
+    </form>
+  </div><!-- /screen-form -->
+
+  <!-- ══════════════ SCREEN 2: SUMMARY ══════════════ -->
+  <div id="screen-summary">
+
+    <div class="summary-grid">
+
+      <div class="section-label">Entreprise</div>
+      <div class="summary-item">
+        <span class="summary-label">Nom entreprise</span>
+        <span class="summary-value" id="s-nomEntreprise"></span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">SIREN</span>
+        <span class="summary-value" id="s-siren"></span>
+      </div>
+
+      <div class="section-label">Contact</div>
+      <div class="summary-item">
+        <span class="summary-label">Nom</span>
+        <span class="summary-value" id="s-nom"></span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Prénom</span>
+        <span class="summary-value" id="s-prenom"></span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Téléphone</span>
+        <span class="summary-value" id="s-telephone"></span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Email</span>
+        <span class="summary-value" id="s-email"></span>
+      </div>
+
+      <div class="section-label">Adresse</div>
+      <div class="summary-item full">
+        <span class="summary-label">Adresse</span>
+        <span class="summary-value" id="s-adresse"></span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Code Postal</span>
+        <span class="summary-value" id="s-codePostal"></span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Ville</span>
+        <span class="summary-value" id="s-ville"></span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Pays</span>
+        <span class="summary-value" id="s-pays"></span>
+      </div>
+
+      <div class="section-label">Notes</div>
+      <div class="summary-item full">
+        <span class="summary-label">Notes</span>
+        <span class="summary-value" id="s-notes"></span>
+      </div>
+
+    </div><!-- /summary-grid -->
+
+    <div class="error-banner" id="error-banner">
+      Une erreur s'est produite lors de l'envoi. Veuillez réessayer.
+      <br><strong id="error-detail"></strong>
+    </div>
+
+    <div class="summary-actions">
+      <button type="button" class="btn btn-secondary" id="btn-back">
+        ← Modifier
+      </button>
+      <button type="button" class="btn btn-success" id="btn-confirm">
+        <span class="spinner" id="spinner"></span>
+        <span id="btn-confirm-label">Confirmer et envoyer ✓</span>
+      </button>
+    </div>
+
+  </div><!-- /screen-summary -->
+
+  <!-- ══════════════ SCREEN 3: SUCCESS ══════════════ -->
+  <div id="screen-success">
+    <div class="success-box">
+      <div class="success-icon">✅</div>
+      <h2>Merci !</h2>
+      <p>Vos informations ont bien été envoyées.<br>Nous reviendrons vers vous très prochainement.</p>
+    </div>
+  </div>
+
+</div><!-- /card -->
+
+<script>
+  // ─────────────────────────────────────────────
+  //  CONFIGURATION — paste your Web App URL here
+  // ─────────────────────────────────────────────
+  const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
+
+  // ── Helpers ──────────────────────────────────
+  const $ = id => document.getElementById(id);
+
+  function showScreen(name) {
+    ['screen-form', 'screen-summary', 'screen-success'].forEach(id => {
+      $(id).classList.remove('active');
+    });
+    $('screen-' + name).classList.add('active');
+
+    // Update progress indicator
+    if (name === 'form') {
+      $('step1-indicator').className = 'progress-step active';
+      $('step2-indicator').className = 'progress-step';
+    } else if (name === 'summary') {
+      $('step1-indicator').className = 'progress-step done';
+      $('step2-indicator').className = 'progress-step active';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Form data ────────────────────────────────
+  const FIELDS = [
+    'nomEntreprise', 'siren',
+    'nom', 'prenom', 'telephone', 'email',
+    'adresse', 'codePostal', 'ville', 'pays',
+    'notes'
+  ];
+
+  function collectFormData() {
+    const data = {};
+    FIELDS.forEach(f => { data[f] = $(f).value.trim(); });
+    return data;
+  }
+
+  // ── Validation ───────────────────────────────
+  const REQUIRED = ['nomEntreprise', 'nom', 'prenom', 'telephone', 'email'];
+
+  function validateForm() {
+    let valid = true;
+    // Clear previous errors
+    FIELDS.forEach(f => {
+      const el = $(f);
+      el.classList.remove('invalid');
+      const err = $('err-' + f);
+      if (err) err.classList.remove('show');
+    });
+
+    REQUIRED.forEach(f => {
+      const el = $(f);
+      if (!el.value.trim()) {
+        el.classList.add('invalid');
+        const err = $('err-' + f);
+        if (err) { err.textContent = 'Champ requis.'; err.classList.add('show'); }
+        valid = false;
+      }
+    });
+
+    // Email format
+    const emailEl = $('email');
+    if (emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+      emailEl.classList.add('invalid');
+      const err = $('err-email');
+      if (err) { err.textContent = 'Adresse e-mail invalide.'; err.classList.add('show'); }
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  // ── Summary ──────────────────────────────────
+  const LABELS = {
+    nomEntreprise: 'Nom entreprise',
+    siren:         'SIREN',
+    nom:           'Nom',
+    prenom:        'Prénom',
+    telephone:     'Téléphone',
+    email:         'Email',
+    adresse:       'Adresse',
+    codePostal:    'Code Postal',
+    ville:         'Ville',
+    pays:          'Pays',
+    notes:         'Notes',
+  };
+
+  function renderSummary(data) {
+    FIELDS.forEach(f => {
+      const el = $('s-' + f);
+      if (el) el.textContent = data[f] || '';
+    });
+  }
+
+  // ── Submission ───────────────────────────────
+  async function submitToSheet(data) {
+    const spinner  = $('spinner');
+    const btnLabel = $('btn-confirm-label');
+    const btnConfirm = $('btn-confirm');
+    const errorBanner = $('error-banner');
+    const errorDetail = $('error-detail');
+
+    spinner.classList.add('show');
+    btnLabel.textContent = 'Envoi en cours…';
+    btnConfirm.disabled = true;
+    errorBanner.classList.remove('show');
+
+    try {
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' }, // avoid CORS preflight
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status);
+      }
+
+      const json = await response.json();
+      if (json.status !== 'success') {
+        throw new Error(json.message || 'Réponse inattendue du serveur.');
+      }
+
+      showScreen('success');
+
+    } catch (err) {
+      errorDetail.textContent = err.message || '';
+      errorBanner.classList.add('show');
+    } finally {
+      spinner.classList.remove('show');
+      btnLabel.textContent = 'Confirmer et envoyer ✓';
+      btnConfirm.disabled = false;
+    }
+  }
+
+  // ── Event listeners ──────────────────────────
+  $('btn-next').addEventListener('click', () => {
+    if (!validateForm()) return;
+    const data = collectFormData();
+    renderSummary(data);
+    showScreen('summary');
+  });
+
+  $('btn-back').addEventListener('click', () => {
+    $('error-banner').classList.remove('show');
+    showScreen('form');
+  });
+
+  $('btn-confirm').addEventListener('click', () => {
+    const data = collectFormData();
+    submitToSheet(data);
+  });
+
+  // Clear field error on input
+  FIELDS.forEach(f => {
+    const el = $(f);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      el.classList.remove('invalid');
+      const err = $('err-' + f);
+      if (err) err.classList.remove('show');
+    });
+  });
+
+  // Init
+  showScreen('form');
+</script>
+</body>
+</html>
