@@ -821,7 +821,7 @@
       if (f === 'telephone') {
         const code = $('phoneCountryTrigger').dataset.code || '+33';
         const num  = $('telephone').value.trim().replace(/^0+/, '');
-        data.telephone = num ? `${code} ${num}` : '';
+        data.telephone = num ? `${code.replace('+', '')} ${num}` : '';
       } else {
         data[f] = $(f).value.trim();
       }
