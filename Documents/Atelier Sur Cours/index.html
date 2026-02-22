@@ -437,6 +437,42 @@
     .phone-country-list li.selected { font-weight: 600; background: #f0f0f0; }
     .phone-country-list .c-code { color: var(--muted); font-size: .78rem; margin-left: auto; }
 
+    /* ── Pays country select ── */
+    .country-select-wrapper { position: relative; }
+    .country-select-trigger {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .65rem .85rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      user-select: none;
+      font-family: 'Open Sans', sans-serif;
+      font-size: .95rem;
+      font-weight: 300;
+      color: var(--dark);
+      transition: border-color .2s;
+    }
+    .country-select-trigger:hover { border-color: #bbb; }
+    .country-select-trigger.open,
+    .country-select-trigger.open { border-color: var(--dark); }
+    .country-select-trigger .phone-caret { margin-left: auto; }
+    .country-select-dropdown {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0; right: 0;
+      z-index: 200;
+      background: #fff;
+      border: 1px solid var(--border);
+      max-height: 240px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,.10);
+    }
+    .country-select-dropdown.open { display: flex; }
+
     /* ── Responsive ── */
     @media (max-width: 600px) {
       .card { padding: 1.5rem 1.25rem; }
@@ -549,8 +585,19 @@
         </div>
 
         <div class="field">
-          <label for="pays">Pays <span class="req">*</span></label>
-          <input type="text" id="pays" name="pays" autocomplete="country-name" value="France" />
+          <label>Pays <span class="req">*</span></label>
+          <input type="hidden" id="pays" name="pays" value="France" />
+          <div class="country-select-wrapper" id="paysWrapper">
+            <div class="country-select-trigger" id="paysTrigger">
+              <span id="paysFlag">🇫🇷</span>
+              <span id="paysName">France</span>
+              <span class="phone-caret">▾</span>
+            </div>
+            <div class="country-select-dropdown" id="paysDropdown">
+              <input type="text" id="paysSearch" class="phone-search" placeholder="Rechercher un pays…" autocomplete="off" />
+              <ul class="phone-country-list" id="paysCountryList"></ul>
+            </div>
+          </div>
           <span class="field-error" id="err-pays">Champ requis.</span>
         </div>
 
@@ -788,7 +835,54 @@
 
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.phone-wrapper')) closeDropdown();
+    if (!e.target.closest('#paysWrapper')) closePaysList();
   });
+
+  // ── Pays country select ───────────────────────
+  let selectedPays = COUNTRIES.find(c => c.name === 'France') || COUNTRIES[0];
+
+  function buildPaysList(filter = '') {
+    const list = $('paysCountryList');
+    list.innerHTML = '';
+    const q = filter.toLowerCase();
+    COUNTRIES
+      .filter(c => !q || c.name.toLowerCase().includes(q))
+      .forEach(c => {
+        const li = document.createElement('li');
+        if (c === selectedPays) li.classList.add('selected');
+        li.innerHTML = `<span>${c.flag}</span><span>${c.name}</span>`;
+        li.addEventListener('mousedown', (e) => { e.preventDefault(); selectPays(c); });
+        list.appendChild(li);
+      });
+  }
+
+  function selectPays(c) {
+    selectedPays = c;
+    $('paysFlag').textContent = c.flag;
+    $('paysName').textContent = c.name;
+    $('pays').value = c.name;
+    closePaysList();
+  }
+
+  function openPaysList() {
+    $('paysDropdown').classList.add('open');
+    $('paysTrigger').classList.add('open');
+    $('paysSearch').value = '';
+    buildPaysList();
+    setTimeout(() => $('paysSearch').focus(), 50);
+  }
+
+  function closePaysList() {
+    $('paysDropdown').classList.remove('open');
+    $('paysTrigger').classList.remove('open');
+  }
+
+  $('paysTrigger').addEventListener('click', (e) => {
+    e.stopPropagation();
+    $('paysDropdown').classList.contains('open') ? closePaysList() : openPaysList();
+  });
+  $('paysSearch').addEventListener('input', (e) => buildPaysList(e.target.value));
+  $('paysSearch').addEventListener('keydown', (e) => { if (e.key === 'Escape') closePaysList(); });
 
   // ── Screens ──────────────────────────────────
   function showScreen(name) {
