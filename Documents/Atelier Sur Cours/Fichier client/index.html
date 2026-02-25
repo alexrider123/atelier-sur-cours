@@ -526,13 +526,8 @@
         <div class="section-label">Entreprise</div>
 
         <div class="field">
-          <label for="nomEntreprise">Nom entreprise</label>
-          <input type="text" id="nomEntreprise" name="nomEntreprise" autocomplete="organization" />
-        </div>
-
-        <div class="field">
-          <label for="siren">SIREN</label>
-          <input type="text" id="siren" name="siren" maxlength="14" />
+          <label for="societe">Société</label>
+          <input type="text" id="societe" name="societe" autocomplete="organization" />
         </div>
 
         <!-- Contact -->
@@ -648,12 +643,8 @@
     <div class="summary-block">
       <div class="summary-block-title">Entreprise</div>
       <div class="summary-row">
-        <span class="summary-key">Nom entreprise</span>
-        <span class="summary-val" id="s-nomEntreprise"></span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-key">SIREN</span>
-        <span class="summary-val" id="s-siren"></span>
+        <span class="summary-key">Société</span>
+        <span class="summary-val" id="s-societe"></span>
       </div>
     </div>
 
@@ -927,7 +918,7 @@
 
   // ── Form data ────────────────────────────────
   const FIELDS = [
-    'nomEntreprise', 'siren',
+    'societe',
     'civilite', 'nom', 'prenom', 'telephone', 'email',
     'adresse', 'codePostal', 'ville', 'pays',
     'notes'
