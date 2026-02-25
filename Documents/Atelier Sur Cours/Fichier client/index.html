@@ -150,7 +150,7 @@
     }
     label .req { color: var(--danger); margin-left: 2px; }
 
-    input, textarea {
+    input, textarea, select {
       border: 1px solid var(--border);
       border-radius: 0;
       padding: .65rem .85rem;
@@ -161,14 +161,24 @@
       background: #fff;
       color: var(--dark);
     }
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: var(--dark);
     }
-    input.invalid, textarea.invalid {
+    input.invalid, textarea.invalid, select.invalid {
       border-color: var(--danger);
     }
     textarea { resize: vertical; min-height: 90px; }
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .85rem center;
+      background-size: .65rem;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
 
     .field-error {
       font-size: .78rem;
@@ -528,6 +538,16 @@
         <!-- Contact -->
         <div class="section-label">Contact</div>
 
+        <div class="field full">
+          <label for="civilite">Civilité <span class="req">*</span></label>
+          <select id="civilite" name="civilite">
+            <option value="">— Sélectionner —</option>
+            <option value="Monsieur">Monsieur</option>
+            <option value="Madame">Madame</option>
+          </select>
+          <span class="field-error" id="err-civilite">Champ requis.</span>
+        </div>
+
         <div class="field">
           <label for="nom">Nom <span class="req">*</span></label>
           <input type="text" id="nom" name="nom" autocomplete="family-name" />
@@ -640,6 +660,10 @@
     <!-- Contact -->
     <div class="summary-block">
       <div class="summary-block-title">Contact</div>
+      <div class="summary-row">
+        <span class="summary-key">Civilité</span>
+        <span class="summary-val" id="s-civilite"></span>
+      </div>
       <div class="summary-row">
         <span class="summary-key">Nom</span>
         <span class="summary-val" id="s-nom"></span>
@@ -904,7 +928,7 @@
   // ── Form data ────────────────────────────────
   const FIELDS = [
     'nomEntreprise', 'siren',
-    'nom', 'prenom', 'telephone', 'email',
+    'civilite', 'nom', 'prenom', 'telephone', 'email',
     'adresse', 'codePostal', 'ville', 'pays',
     'notes'
   ];
@@ -924,7 +948,7 @@
   }
 
   // ── Validation ───────────────────────────────
-  const REQUIRED = ['nom', 'prenom', 'telephone', 'email', 'adresse', 'codePostal', 'ville', 'pays'];
+  const REQUIRED = ['civilite', 'nom', 'prenom', 'telephone', 'email', 'adresse', 'codePostal', 'ville', 'pays'];
 
   function validateForm() {
     let valid = true;

@@ -11,7 +11,7 @@ const OWNER_EMAIL = 'YOUR_EMAIL';      // optional: receives an email on each su
 // Column order — must match the header row in the sheet
 const COLUMNS = [
   'nomEntreprise', 'siren',
-  'nom', 'prenom', 'telephone', 'email',
+  'civilite', 'nom', 'prenom', 'telephone', 'email',
   'adresse', 'codePostal', 'ville', 'pays',
   'notes'
 ];
