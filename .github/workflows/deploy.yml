@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'Documents/Atelier Sur Cours/Fichier client/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
