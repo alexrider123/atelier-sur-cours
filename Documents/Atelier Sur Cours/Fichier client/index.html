@@ -483,6 +483,20 @@
     }
     .country-select-dropdown.open { display: flex; }
 
+    /* ── Disabled personal fields (company mode) ── */
+    input:disabled, select:disabled {
+      background: #f0f0f0;
+      color: var(--muted);
+      cursor: not-allowed;
+      border-color: var(--border);
+    }
+    .field-disabled label {
+      color: var(--muted);
+    }
+    .field-disabled label .req {
+      visibility: hidden;
+    }
+
     /* ── Responsive ── */
     @media (max-width: 600px) {
       .card { padding: 1.5rem 1.25rem; }
@@ -924,13 +938,37 @@
     'notes'
   ];
 
+  // ── Company / personal field toggle ─────────
+  const PERSONAL_FIELDS = ['civilite', 'nom', 'prenom'];
+
+  function updatePersonalFieldsState() {
+    const isCompany = $('societe').value.trim().length > 0;
+    PERSONAL_FIELDS.forEach(f => {
+      const el = $(f);
+      const fieldDiv = el.closest('.field');
+      if (isCompany) {
+        el.disabled = true;
+        el.classList.remove('invalid');
+        if (fieldDiv) fieldDiv.classList.add('field-disabled');
+        const err = $('err-' + f);
+        if (err) err.classList.remove('show');
+      } else {
+        el.disabled = false;
+        if (fieldDiv) fieldDiv.classList.remove('field-disabled');
+      }
+    });
+  }
+
   function collectFormData() {
     const data = {};
+    const isCompany = $('societe').value.trim().length > 0;
     FIELDS.forEach(f => {
       if (f === 'telephone') {
         const code = $('phoneCountryTrigger').dataset.code || '+33';
         const num  = $('telephone').value.trim().replace(/^0+/, '');
         data.telephone = num ? `${code.replace('+', '')} ${num}` : '';
+      } else if (isCompany && PERSONAL_FIELDS.includes(f)) {
+        data[f] = '';
       } else {
         data[f] = $(f).value.trim();
       }
@@ -942,15 +980,19 @@
   const REQUIRED = ['civilite', 'nom', 'prenom', 'telephone', 'email', 'adresse', 'codePostal', 'ville', 'pays'];
 
   function validateForm() {
+    const isCompany = $('societe').value.trim().length > 0;
     let valid = true;
 
     FIELDS.forEach(f => {
-      $(f).classList.remove('invalid');
+      const el = $(f);
+      if (!el) return;
+      el.classList.remove('invalid');
       const err = $('err-' + f);
       if (err) err.classList.remove('show');
     });
 
     REQUIRED.forEach(f => {
+      if (isCompany && PERSONAL_FIELDS.includes(f)) return;
       const el = $(f);
       if (!el.value.trim()) {
         el.classList.add('invalid');
@@ -1041,6 +1083,8 @@
       if (err) err.classList.remove('show');
     });
   });
+
+  $('societe').addEventListener('input', updatePersonalFieldsState);
 
   showScreen('form');
 </script>
